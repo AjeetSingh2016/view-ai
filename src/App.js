@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import "./App.css"
 
-function App() {
+const App = () => {
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://randomuser.me/api/?results=20');
+        setUserData(response.data.results);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Random User Data</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>City State</th>
+            <th>Country</th>
+            <th>Postcode</th>
+            <th>Street Number</th>
+            <th>Name</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          {userData.map((user, index) => (
+            <tr key={index}>
+              <td>{`${user.location.city}, ${user.location.state}`}</td>
+              <td>{user.location.country}</td>
+              <td>{user.location.postcode}</td>
+              <td>{user.location.street.number}</td>
+              <td>{`${user.name.first} ${user.name.last}`}</td>
+              <td>{user.location.coordinates.latitude}</td>
+              <td>{user.location.coordinates.longitude}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
 export default App;
